@@ -14,8 +14,8 @@ public class Graph {
         this.anzahl = 0;
         this.knotenliste = new Knoten[maxAnzahl];
         this.adjazenzmatrix = new int[maxAnzahl][maxAnzahl];
-        for (int z=0;z<maxAnzahl;z=z+1) {
-            for (int s=0;s<maxAnzahl;s=s+1) {
+        for (int z=0; z<maxAnzahl; z=z+1) {
+            for (int s=0; s<maxAnzahl; s=s+1) {
                 adjazenzmatrix[z][s] = 0;  // eigentlich unnoetig, da int-Werte ohnehin auf 0 initialisiert
             }
         }
