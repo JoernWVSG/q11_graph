@@ -1,5 +1,5 @@
 public class Ort implements Datenelement {
-    private String name;
+    private final String name;
 
     /**
      *

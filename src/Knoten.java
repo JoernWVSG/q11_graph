@@ -11,10 +11,18 @@ public class Knoten {
     }
 
     /**
-     * Liefert Referenz auf Datenelement zurueck
+     * Getter daten
      * @return Referenz auf Datenelement
      */
     public Datenelement datenGeben() {
         return this.daten;
+    }
+
+    /**
+     * Setter daten
+     * @param daten Referenz auf Datenelement
+     */
+    public void datenSetzen(Datenelement daten) {
+        this.daten = daten;
     }
 }
