@@ -10,7 +10,18 @@ public class Test {
         g.ungerichteteKanteEinfuegen("A", "C");
         g.ungerichteteKanteEinfuegen("A", "D");
         g.ungerichteteKanteEinfuegen("C", "D");
-        g.ungerichteteKanteEinfuegen("D", "E");
+        g.ungerichteteKanteEinfuegen("B", "D");
+        //g.kanteEinfuegen("E","A");
+        g.adjazenzmatrixAusgeben();
+        System.out.print("Maxtrix gewichtet: ");
+        System.out.println(g.istUngerichtet()?"Ja":"Nein");
+        g.knotenEntfernen("C");
+        g.adjazenzmatrixAusgeben();
+        g.knotenEntfernen("A");
+        g.adjazenzmatrixAusgeben();
+        g.knotenEntfernen("E");
+        g.adjazenzmatrixAusgeben();
+        g.knotenEinfuegen(new Ort("A"));
         g.adjazenzmatrixAusgeben();
     }
 }
