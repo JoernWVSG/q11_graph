@@ -163,26 +163,33 @@ public class Graph {
         return true;
     }
 
+    /**
+     * Entfernt Knoten mit angegebenen Schluessel
+     * @param schluessel Schluessel des zu loeschenden Knotens
+     */
     public void knotenEntfernen(String schluessel) {
         int knotenIndex = this.knotenIndexGeben(schluessel);
         if (knotenIndex >= 0) {
-            for (int i=knotenIndex+1; i<this.anzahl; i++) {
-                for (int j=0; j<this.anzahl; j++) {
-                    this.adjazenzmatrix[j][i-1] = this.adjazenzmatrix[j][i];
-                }
-            }
-            for (int i=knotenIndex+1; i<this.anzahl; i++) {
-                if (this.anzahl >= 0)
-                    System.arraycopy(this.adjazenzmatrix[i], 0, this.adjazenzmatrix[i - 1], 0, this.anzahl);
-            }
+            // Spalten vorruecken
             for (int i=0; i<this.anzahl; i++) {
+                for (int j=knotenIndex+1; j<this.anzahl; j++) {
+                    this.adjazenzmatrix[i][j-1] = this.adjazenzmatrix[i][j];
+                }
                 this.adjazenzmatrix[i][this.anzahl-1] = 0;
+            }
+            // Zeilen hochruecken
+            for (int i=0; i<this.anzahl; i++) {
+                for (int j=knotenIndex+1; j<this.anzahl; j++) {
+                    this.adjazenzmatrix[j-1][i] = this.adjazenzmatrix[j][i];
+                }
                 this.adjazenzmatrix[this.anzahl-1][i] = 0;
             }
-            if (this.anzahl - (knotenIndex + 1) >= 0)
-                System.arraycopy(this.knotenliste, knotenIndex + 1, this.knotenliste, knotenIndex + 1 - 1, this.anzahl - (knotenIndex + 1));
+            for (int i=knotenIndex+1; i<this.anzahl; i++) {
+                this.knotenliste[i-1] = this.knotenliste[i];
+            }
             this.knotenliste[this.anzahl-1] = null;
             this.anzahl--;
         }
     }
+
 }

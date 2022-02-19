@@ -1,6 +1,7 @@
 public class Knoten {
 
     private Datenelement daten;
+    private boolean besucht;
 
     /**
      *
@@ -24,5 +25,21 @@ public class Knoten {
      */
     public void datenSetzen(Datenelement daten) {
         this.daten = daten;
+    }
+
+    /**
+     * Getter besucht
+     * @return Wert von besucht
+     */
+    public boolean besuchtGeben() {
+        return this.besucht;
+    }
+
+    /**
+     * Setter besucht
+     * @param besucht Setze auf besucht
+     */
+    public void besuchtSetzen(boolean besucht) {
+        this.besucht = besucht;
     }
 }
