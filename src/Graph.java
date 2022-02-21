@@ -192,4 +192,35 @@ public class Graph {
         }
     }
 
+    /**
+     * Fuehrt den Algorithmus der Tiefensuche im Graphen durch
+     * @param start Schluessel des Startknotens fuer Tiefensuche
+     */
+    public void dfsStarten(String start) {
+        int startIndex = this.knotenIndexGeben(start);
+        if (startIndex >= 0) {
+            for (int i=0; i<this.anzahl; i++) {
+                this.knotenliste[i].besuchtSetzen(false);
+            }
+            System.out.print("Tiefensuche: ");
+            this.dfs(startIndex);
+            System.out.println();
+        }
+    }
+
+    /**
+     * Fuehrt rekursiv den Algorithmus der Tiefensuche im Graphen durch
+     * @param index Index des aktiven Knotens
+     */
+    private void dfs(int index) {
+        Knoten akn = this.knotenliste[index];
+        akn.besuchtSetzen(true);
+        System.out.print(akn.datenGeben().infoGeben() + " ");
+        for (int i=0; i<this.anzahl; i++) {
+            if (this.adjazenzmatrix[index][i] != 0 && this.knotenliste[i].besuchtGeben() == false) {
+                this.dfs(i);
+            }
+        }
+    }
+
 }

@@ -12,6 +12,10 @@ public class Test {
         g.kanteEinfuegen("C", "A");
         g.kanteEinfuegen("C", "B");
         g.adjazenzmatrixAusgeben();
+        g.dfsStarten("A");
+        g.dfsStarten("B");
+        g.dfsStarten("C");
+        g.dfsStarten("D");
         System.out.println("Kante von B nach C löschen:");
         g.kanteEntfernen("B", "C");
         g.adjazenzmatrixAusgeben();
