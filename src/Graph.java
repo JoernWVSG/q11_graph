@@ -1,9 +1,10 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Graph {
 
-    private final Knoten[] knotenliste;
-    private final int[][] adjazenzmatrix;
-    private final int maxAnzahl;
-    private int anzahl;
+    private final ArrayList<Knoten> knotenliste;
+    private final HashMap<Knoten,ArrayList<Kante>> adjazenzliste;
 
     /**
      * Liefert Index eines Knotens mit angegebenene Schluessel zurueck
@@ -13,9 +14,9 @@ public class Graph {
      * @return Index des Knotens
      */
     private int knotenIndexGeben(String schluessel) {
-        for (int i = 0; i < this.anzahl; i++) {
-            if (this.knotenliste[i].datenGeben().vergleiche(schluessel) == 0) {
-                return i;
+        for (Knoten k : this.knotenliste) {
+            if (k.datenGeben().vergleiche(schluessel) == 0) {
+                return this.knotenliste.indexOf(k);
             }
         }
         return -1;
@@ -24,18 +25,10 @@ public class Graph {
     /**
      * Konstruktor
      *
-     * @param maxAnzahl maximale Anzahl der Knoten im Graph
      */
-    public Graph(int maxAnzahl) {
-        this.maxAnzahl = maxAnzahl;
-        this.anzahl = 0;
-        this.knotenliste = new Knoten[maxAnzahl];
-        this.adjazenzmatrix = new int[maxAnzahl][maxAnzahl];
-        for (int z = 0; z < maxAnzahl; z = z + 1) {
-            for (int s = 0; s < maxAnzahl; s = s + 1) {
-                adjazenzmatrix[z][s] = 0;  // eigentlich unnoetig, da int-Werte ohnehin auf 0 initialisiert
-            }
-        }
+    public Graph() {
+        this.knotenliste = new ArrayList<>();
+        this.adjazenzliste = new HashMap<>();
     }
 
     /**
@@ -44,12 +37,9 @@ public class Graph {
      * @param daten neu einzufuegendes Datenelement
      */
     public void knotenEinfuegen(Datenelement daten) {
-        if (this.anzahl < this.maxAnzahl) {
-            this.knotenliste[this.anzahl] = new Knoten(daten);
-            this.anzahl++;
-        } else {
-            System.out.println("Maximale Zahl an Knoten bereits eingefügt.");
-        }
+        Knoten k = new Knoten(daten);
+        this.knotenliste.add(k);
+        this.adjazenzliste.put(k, new ArrayList<>());
     }
 
     /**
@@ -63,7 +53,12 @@ public class Graph {
         int vonIndex = this.knotenIndexGeben(von);
         int nachIndex = this.knotenIndexGeben(nach);
         if (vonIndex >= 0 && nachIndex >= 0) {
-            this.adjazenzmatrix[vonIndex][nachIndex] = gewicht;
+            Kante kante = this.kanteFinden(this.knotenliste.get(vonIndex), this.knotenliste.get(nachIndex));
+            if (kante != null) {
+                kante.gewichtSetzen(gewicht);
+            } else {
+                this.adjazenzliste.get(this.knotenliste.get(vonIndex)).add(new Kante(this.knotenliste.get(nachIndex), gewicht));
+            }
         }
     }
 
@@ -109,7 +104,10 @@ public class Graph {
         int vonIndex = this.knotenIndexGeben(von);
         int nachIndex = this.knotenIndexGeben(nach);
         if (vonIndex >= 0 && nachIndex >= 0) {
-            this.adjazenzmatrix[vonIndex][nachIndex] = 0;
+            Kante kante = this.kanteFinden(this.knotenliste.get(vonIndex), this.knotenliste.get(nachIndex));
+            if (kante != null) {
+                this.adjazenzliste.get(this.knotenliste.get(vonIndex)).remove(kante);
+            }
         }
     }
 
@@ -124,12 +122,22 @@ public class Graph {
         this.kanteEntfernen(nach, von);
     }
 
+    public Kante kanteFinden(Knoten von, Knoten nach) {
+        ArrayList<Kante> kanten = this.adjazenzliste.get(von);
+        for (Kante kante : kanten) {
+            if (kante.zielGeben().equals(nach)) {
+                return kante;
+            }
+        }
+        return null;
+    }
+
     /**
      * Ausgabe der Knotenliste
      */
     public void knotenAusgeben() {
-        for (int i = 0; i < this.anzahl; i++) {
-            System.out.print("\t" + this.knotenliste[i].datenGeben().schluesselGeben());
+        for (Knoten knoten : this.knotenliste) {
+            System.out.print("\t" + knoten.datenGeben().schluesselGeben());
         }
         System.out.println();
     }
@@ -139,10 +147,15 @@ public class Graph {
      */
     public void adjazenzmatrixAusgeben() {
         this.knotenAusgeben();
-        for (int i = 0; i < this.anzahl; i++) {
-            System.out.print(this.knotenliste[i].datenGeben().schluesselGeben());
-            for (int j = 0; j < this.anzahl; j++) {
-                System.out.print("\t" + this.adjazenzmatrix[i][j]);
+        for (int i = 0; i < this.knotenliste.size(); i++) {
+            Knoten von = this.knotenliste.get(i);
+            System.out.print(von.datenGeben().schluesselGeben());
+            for (Knoten knoten : this.knotenliste) {
+                if (this.kanteFinden(von, knoten) != null) {
+                    System.out.print("\t" + this.kanteFinden(von, knoten).gewichtGeben());
+                } else {
+                    System.out.print("\t" + 0);
+                }
             }
             System.out.println();
         }
@@ -153,13 +166,16 @@ public class Graph {
      * @return True, falls der Graph gerichtet ist
      */
     public boolean istUngerichtet() {
-        for (int i=0; i<this.anzahl; i++) {
-            for (int j=i+1; j<this.anzahl; j++) {
+        /*
+        for (int i = 0; i < this.knotenliste.size(); i++) {
+            for (int j = i + 1; j < this.knotenliste.size(); j++) {
                 if (this.adjazenzmatrix[i][j] != this.adjazenzmatrix[j][i]) {
                     return false;
                 }
             }
         }
+
+         */
         return true;
     }
 
@@ -170,25 +186,18 @@ public class Graph {
     public void knotenEntfernen(String schluessel) {
         int knotenIndex = this.knotenIndexGeben(schluessel);
         if (knotenIndex >= 0) {
-            // Spalten vorruecken
-            for (int i=0; i<this.anzahl; i++) {
-                for (int j=knotenIndex+1; j<this.anzahl; j++) {
-                    this.adjazenzmatrix[i][j-1] = this.adjazenzmatrix[i][j];
+            Knoten kloesch = this.knotenliste.get(knotenIndex);
+            // Kanten mit kloesch als Start loeschen
+            this.adjazenzliste.remove(kloesch);
+            // Kanten mit k als Ziel loeschen
+            for (Knoten k : this.adjazenzliste.keySet()) {
+                Kante kante = this.kanteFinden(k,kloesch);
+                if (kante != null) {
+                    this.adjazenzliste.get(k).remove(kante);
                 }
-                this.adjazenzmatrix[i][this.anzahl-1] = 0;
             }
-            // Zeilen hochruecken
-            for (int i=0; i<this.anzahl; i++) {
-                for (int j=knotenIndex+1; j<this.anzahl; j++) {
-                    this.adjazenzmatrix[j-1][i] = this.adjazenzmatrix[j][i];
-                }
-                this.adjazenzmatrix[this.anzahl-1][i] = 0;
-            }
-            for (int i=knotenIndex+1; i<this.anzahl; i++) {
-                this.knotenliste[i-1] = this.knotenliste[i];
-            }
-            this.knotenliste[this.anzahl-1] = null;
-            this.anzahl--;
+            // Knoten loeschen
+            this.knotenliste.remove(kloesch);
         }
     }
 
@@ -199,26 +208,26 @@ public class Graph {
     public void dfsStarten(String start) {
         int startIndex = this.knotenIndexGeben(start);
         if (startIndex >= 0) {
-            for (int i=0; i<this.anzahl; i++) {
-                this.knotenliste[i].besuchtSetzen(false);
+            for (Knoten knoten : this.knotenliste) {
+                knoten.besuchtSetzen(false);
             }
             System.out.print("Tiefensuche: ");
-            this.dfs(startIndex);
+            this.dfs(this.knotenliste.get(startIndex));
             System.out.println();
         }
     }
 
     /**
      * Fuehrt rekursiv den Algorithmus der Tiefensuche im Graphen durch
-     * @param index Index des aktiven Knotens
+     * @param akn Referenz auf aktiven Knotens
      */
-    private void dfs(int index) {
-        Knoten akn = this.knotenliste[index];
+    private void dfs(Knoten akn) {
         akn.besuchtSetzen(true);
         System.out.print(akn.datenGeben().infoGeben() + " ");
-        for (int i=0; i<this.anzahl; i++) {
-            if (this.adjazenzmatrix[index][i] != 0 && this.knotenliste[i].besuchtGeben() == false) {
-                this.dfs(i);
+        for (Knoten k : this.knotenliste) {
+            Kante kante = this.kanteFinden(akn, k);
+            if (!k.besuchtGeben() && kante != null) {
+                this.dfs(k);
             }
         }
     }

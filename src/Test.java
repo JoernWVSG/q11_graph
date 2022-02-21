@@ -1,6 +1,6 @@
 public class Test {
     public static void main(String[] args) {
-        Graph g = new Graph(4);
+        Graph g = new Graph();
         g.knotenEinfuegen(new Ort("A"));
         g.knotenEinfuegen(new Ort("B"));
         g.knotenEinfuegen(new Ort("C"));
