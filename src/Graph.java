@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class Graph {
 
     private final Knoten[] knotenliste;
@@ -220,6 +222,35 @@ public class Graph {
             if (this.adjazenzmatrix[index][i] != 0 && this.knotenliste[i].besuchtGeben() == false) {
                 this.dfs(i);
             }
+        }
+    }
+
+    public void dfsIterativ(String start) {
+        Stack<Knoten> knotenStack = new Stack<Knoten>();
+        Knoten akn;
+        int startIndex = this.knotenIndexGeben(start);
+        if (startIndex >= 0) {
+            System.out.print("Tiefensuche (iterativ): ");
+            for (Knoten knoten : this.knotenliste) {
+                if (knoten != null) {
+                    knoten.besuchtSetzen(false);
+                }
+            }
+            akn = this.knotenliste[startIndex];
+            akn.besuchtSetzen(true);
+            knotenStack.push(akn);
+            while (!knotenStack.isEmpty()) {
+                akn = knotenStack.pop();
+                System.out.print(akn.datenGeben().infoGeben() +  " ");
+                int aknIndex = this.knotenIndexGeben(akn.datenGeben().schluesselGeben());
+                for (int i=this.anzahl-1; i>=0; i--) {
+                    if (this.adjazenzmatrix[aknIndex][i] != 0 && this.knotenliste[i].besuchtGeben() == false) {
+                        this.knotenliste[i].besuchtSetzen(true);
+                        knotenStack.push(this.knotenliste[i]);
+                    }
+                }
+            }
+            System.out.println();
         }
     }
 
