@@ -225,6 +225,10 @@ public class Graph {
         }
     }
 
+    /**
+     * Iterative Version der Tiefensuche
+     * @param start
+     */
     public void dfsIterativ(String start) {
         Stack<Knoten> knotenStack = new Stack<Knoten>();
         Knoten akn;
@@ -252,6 +256,67 @@ public class Graph {
             }
             System.out.println();
         }
+    }
+
+    /**
+     * Findet noch unbesuchten Knoten für Dijkstra-Algorithmus
+     * mit kleinster Entfernung zum Startknoten
+     * @return Referenz auf gefundenen Knoten
+     */
+    private Knoten kleinstenUnbesuchtenFinden() {
+        int distanz = Integer.MAX_VALUE;
+        Knoten kleinster = null;
+        for (int i = 0; i < this.anzahl; i++) {
+            if (this.knotenliste[i].besuchtGeben() == false & this.knotenliste[i].getDijskstraEntfernung() < distanz) {
+                kleinster = this.knotenliste[i];
+                distanz = this.knotenliste[i].getDijskstraEntfernung();
+            }
+        }
+        return kleinster;
+    }
+
+    /**
+     * Initialisiert Dijkstra-Suche und führt diese durch.
+     * @param schluesselStart Schlüssel des Startknotens
+     */
+    public void dijkstraDurchfuehren(String schluesselStart) {
+        // Knoten für Algorithmus vorbereiten
+        for (int i = 0; i < this.anzahl; i++) {
+            this.knotenliste[i].besuchtSetzen(false);
+            this.knotenliste[i].setDijkstraVorgaenger(null);
+            this.knotenliste[i].setDijskstraEntfernung(Integer.MAX_VALUE);
+        }
+        // Startknoten vorbereiten
+        int aknIndex = this.knotenIndexGeben(schluesselStart);
+        Knoten akn = this.knotenliste[aknIndex];
+        akn.setDijskstraEntfernung(0);
+        // Solange es noch unbesuchte Knoten gibt...
+        while (this.kleinstenUnbesuchtenFinden() != null) {
+            akn = this.kleinstenUnbesuchtenFinden();
+            aknIndex = this.knotenIndexGeben(akn.datenGeben().schluesselGeben());
+            akn.besuchtSetzen(true);
+            for (int i = 0; i < this.anzahl; i++) {
+                if (this.adjazenzmatrix[aknIndex][i]>0
+                    && this.knotenliste[i].getDijskstraEntfernung() > akn.getDijskstraEntfernung() + this.adjazenzmatrix[aknIndex][i]) {
+                    this.knotenliste[i].setDijkstraVorgaenger(akn);
+                    this.knotenliste[i].setDijskstraEntfernung(akn.getDijskstraEntfernung() + this.adjazenzmatrix[aknIndex][i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Pfad und Entfernung zum Zielknoten ausdrucken
+     * @param schluesselZiel Schlüssel des zielknotens
+     */
+    public void dijkstraPfadDrucken(String schluesselZiel) {
+        Knoten ziel = this.knotenliste[this.knotenIndexGeben(schluesselZiel)];
+        System.out.println("Entfernung: " + ziel.getDijskstraEntfernung());
+        while (ziel != null) {
+            System.out.printf(ziel.datenGeben().schluesselGeben() + " ");
+            ziel = ziel.getDijkstraVorgaenger();
+        }
+        System.out.println();
     }
 
 }

@@ -2,6 +2,24 @@ public class Knoten {
 
     private Datenelement daten;
     private boolean besucht;
+    private int dijskstraEntfernung;
+    private Knoten dijkstraVorgaenger;
+
+    public int getDijskstraEntfernung() {
+        return dijskstraEntfernung;
+    }
+
+    public void setDijskstraEntfernung(int dijskstraEntfernung) {
+        this.dijskstraEntfernung = dijskstraEntfernung;
+    }
+
+    public Knoten getDijkstraVorgaenger() {
+        return dijkstraVorgaenger;
+    }
+
+    public void setDijkstraVorgaenger(Knoten dijkstraVorgaenger) {
+        this.dijkstraVorgaenger = dijkstraVorgaenger;
+    }
 
     /**
      *
